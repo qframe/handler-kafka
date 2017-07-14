@@ -67,9 +67,6 @@ func (p *Plugin) Run() {
 				}
 			case qtypes_inventory.ContainerEvent:
 				ce := val.(qtypes_inventory.ContainerEvent)
-				if ce.StopProcessing(p, false) {
-					continue
-				}
 				p.PushToKafka(ce)
 			}
 		}
@@ -90,5 +87,5 @@ func (p *Plugin) PushToKafka(ce qtypes_inventory.ContainerEvent) (err error) {
 		fmt.Printf("Delivered message to topic %s [%d] at offset %v\n",
 			*m.TopicPartition.Topic, m.TopicPartition.Partition, m.TopicPartition.Offset)
 	}
-
+	return
 }
