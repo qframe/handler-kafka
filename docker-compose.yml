@@ -12,10 +12,4 @@ broker:
       - "moby:127.0.0.1"
     environment:
       ZK_SERVERS: "moby"
-tailer:
-    image: qnib/uplain-init
-    command: wait.sh
-    net: "host"
-    extra_hosts:
-      - "moby:127.0.0.1"
 
