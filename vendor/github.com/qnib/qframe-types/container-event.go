@@ -6,6 +6,7 @@ import (
 
 	"strings"
 )
+
 type ContainerEvent struct {
 	Base
 	Message   	string

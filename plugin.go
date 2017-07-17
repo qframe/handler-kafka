@@ -1,13 +1,16 @@
 package qhandler_kafka
 
 import (
+	"encoding/json"
 	"fmt"
+	"reflect"
 	"sync"
+
 	"github.com/zpatrick/go-config"
 	"github.com/confluentinc/confluent-kafka-go/kafka"
 
 	"github.com/qnib/qframe-types"
-	"github.com/qframe/types/inventory"
+	"github.com/qframe/types/docker-events"
 )
 
 const (
@@ -59,33 +62,86 @@ func (p *Plugin) Run() {
 	for {
 		select {
 		case val := <-bg.Read:
+			p.Log("trace", fmt.Sprintf("received event: %s | %v", reflect.TypeOf(val), val))
 			switch val.(type) {
 			case qtypes.Metric:
 				m := val.(qtypes.Metric)
 				if p.StopProcessingMetric(m, false) {
 					continue
 				}
-			case qtypes_inventory.ContainerEvent:
-				ce := val.(qtypes_inventory.ContainerEvent)
+			case qtypes_docker_events.ServiceEvent:
+				se := val.(qtypes_docker_events.ServiceEvent)
+				se.StopProcessing(p.Plugin, false)
+				p.PushToKafka(se)
+			case qtypes_docker_events.ContainerEvent:
+				ce := val.(qtypes_docker_events.ContainerEvent)
+				ce.StopProcessing(p.Plugin, false)
 				p.PushToKafka(ce)
 			}
 		}
 	}
 }
 
-func (p *Plugin) PushToKafka(ce qtypes_inventory.ContainerEvent) (err error) {
-	value := "Hello Go!"
-	topic := p.CfgStringOr("topic", "qframe")
-	err = p.producer.Produce(&kafka.Message{TopicPartition: kafka.TopicPartition{Topic: &topic, Partition: kafka.PartitionAny}, Value: []byte(value)}, p.deliveryChan)
+type Payload struct {
+	Topic string
+	Data map[string]interface{}
+}
 
-	e := <-p.deliveryChan
-	m := e.(*kafka.Message)
+// ToJSON creates JSON payload depending on the type of Event.
+// The Payload is placed in a map, in which the key defines the topic to push the payload to.
+func (p *Plugin) ToPayload(e interface{}) (payloads []Payload, err error) {
+	switch e.(type) {
+	case qtypes_docker_events.ContainerEvent:
+		ce := e.(qtypes_docker_events.ContainerEvent)
+		switch ce.Event.Action {
+		case "start","create":
+			// In case the container starts, the information about the start is passed
+			payloads = append(payloads, Payload{Topic: "cnt_details", Data: ce.ContainerToJSON()})
+		case "exec_create":
+			return
+		}
+		// Add normal DockerEvent
+		payloads = append(payloads, Payload{Topic: "cnt_event", Data: ce.EventToJSON()})
+	case qtypes_docker_events.ServiceEvent:
+		se := e.(qtypes_docker_events.ServiceEvent)
+		switch se.Event.Action {
+		case "create":
+			// In case the container starts, the information about the start is passed
+			payloads = append(payloads, Payload{Topic: "srv_details", Data: se.ServiceToJSON()})
+		case "exec_create":
+			return
+		}
+		payloads = append(payloads, Payload{Topic: "srv_event", Data: se.EventToJSON()})
 
-	if m.TopicPartition.Error != nil {
-		fmt.Printf("Delivery failed: %v\n", m.TopicPartition.Error)
-	} else {
-		fmt.Printf("Delivered message to topic %s [%d] at offset %v\n",
-			*m.TopicPartition.Topic, m.TopicPartition.Partition, m.TopicPartition.Offset)
+	default:
+		p.Log("info", fmt.Sprintf("Skip sending to kafka: %s", reflect.TypeOf(e)))
+
+	}
+	return
+}
+
+func (p *Plugin) PushToKafka(e interface{}) (err error) {
+	payloads, err := p.ToPayload(e)
+	for _, payload := range payloads {
+		topic := payload.Topic
+		data := payload.Data
+		val, err := json.Marshal(data)
+		if err != nil {
+			p.Log("error", fmt.Sprintf("Marshaling failed: %v", err.Error()))
+			return err
+		}
+		err = p.producer.Produce(&kafka.Message{TopicPartition: kafka.TopicPartition{Topic: &topic, Partition: kafka.PartitionAny}, Value: val}, p.deliveryChan)
+		e := <-p.deliveryChan
+		m := e.(*kafka.Message)
+
+		if m.TopicPartition.Error != nil {
+			p.Log("error", fmt.Sprintf("Delivery failed: %v", m.TopicPartition.Error))
+			return m.TopicPartition.Error
+		} else {
+			msg := fmt.Sprintf("Delivered message to topic %s [%d] at offset %v",
+				*m.TopicPartition.Topic, m.TopicPartition.Partition, m.TopicPartition.Offset)
+			p.Log("debug", msg)
+		}
 	}
 	return
 }

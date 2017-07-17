@@ -19,7 +19,6 @@ type Base struct {
 	SourcePath		[]string
 	SourceSuccess 	bool
 	Tags 			map[string]string // Additional KV
-	Data			interface{}
 }
 
 func NewBase(src string) Base {
@@ -48,7 +47,6 @@ func NewBaseFromBase(src string, b Base) Base {
 		SourcePath: append(b.SourcePath, src),
 		SourceSuccess: b.SourceSuccess,
 		Tags: b.Tags,
-		Data: b.Data,
 	}
 }
 
@@ -64,6 +62,19 @@ func NewBaseFromOldBase(src string, b qtypes.Base) Base {
 	}
 }
 
+func (b *Base) ToJSON() map[string]interface{} {
+	res := map[string]interface{}{
+		"base_version": b.BaseVersion,
+		"id": b.ID,
+		"time": b.Time.String(),
+		"time_unix_nano": b.Time.UnixNano(),
+	}
+	res["source_id"] = b.SourceID
+	res["source_path"] = b.SourcePath
+	res["source_success"] = b.SourceSuccess
+	res["tags"] = b.Tags
+	return res
+}
 
 // GenDefaultID uses "<source>-<time.UnixNano()>" and does a sha1 hash.
 func (b *Base) GenDefaultID() string {

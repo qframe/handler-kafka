@@ -19,25 +19,28 @@ func check_err(pname string, err error) {
 	}
 }
 
+func NewConfig(kv map[string]string) *config.Config {
+	return config.NewConfig([]config.Provider{config.NewStatic(kv)})
+}
+
 func Run(ctx *cli.Context) {
 	// Create conf
 	log.Printf("[II] Start Version: %s", ctx.App.Version)
 
-	cfg := config.NewConfig([]config.Provider{})
-	if _, err := os.Stat(ctx.String("config")); err == nil {
-		log.Printf("[II] Use config file: %s", ctx.String("config"))
-		cfg.Providers = append(cfg.Providers, config.NewYAMLFile(ctx.String("config")))
-	} else {
-		log.Printf("[II] No config file found")
+	kv := map[string]string{
+		"log.level": "debug",
+		"log.only-plugins": "kafka",
+		"handler.log.inputs": "docker-events",
+		"handler.kafka.inputs": "docker-events",
 	}
-	cfg.Providers = append(cfg.Providers, config.NewCLI(ctx, false))
+
+	cfg := config.NewConfig([]config.Provider{config.NewStatic(kv)})
 	qChan := qtypes.NewQChan()
 	qChan.Broadcast()
 	//////// Handlers
 	phk, err := qhandler_kafka.New(qChan, cfg, "kafka")
 	check_err(phk.Name, err)
 	go phk.Run()
-	//////// Cache
 	//////// Collectors
 	// Docker Logs collector
 	pcde, err := qcollector_docker_events.New(qChan, cfg, "docker-events")

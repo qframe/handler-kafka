@@ -453,29 +453,43 @@
 			"revisionTime": "2017-07-13T15:20:39Z"
 		},
 		{
+			"checksumSHA1": "sZo+GGrUDJBFhCCs+K3Vrc24Nno=",
 			"path": "github.com/qframe/cache-inventory",
-			"revision": ""
+			"revision": "5a2490f4c53a8ab907668e64f8836fa9b3411dd5",
+			"revisionTime": "2017-07-12T08:05:45Z"
 		},
 		{
-			"checksumSHA1": "wbtuxqOCUMMXYOorH0jJCA+TwH8=",
+			"checksumSHA1": "Yav7C4YnY2lcPlJwK6AsBNXwy0g=",
 			"path": "github.com/qframe/collector-docker-events",
 			"revision": "4adea8b93699b5745fea354818c768f3ec0aac73",
 			"revisionTime": "2017-07-12T09:00:17Z"
 		},
 		{
-			"checksumSHA1": "bctFQEgzealsQtSi+lx24pAfNI0=",
+			"checksumSHA1": "G/70aus8uGUIF6cK0Xe/tnmKMy0=",
+			"path": "github.com/qframe/handler-log",
+			"revision": "8a148d76631ee452ae6b434cb064102d36edebee",
+			"revisionTime": "2017-07-17T07:05:37Z"
+		},
+		{
+			"checksumSHA1": "qTxHjY8oFOfYzlsu582xuqckC50=",
+			"path": "github.com/qframe/types/docker-events",
+			"revision": "a8fbe9e1fe8696abcb1b330911501fd3966abccc",
+			"revisionTime": "2017-07-05T11:44:26Z"
+		},
+		{
+			"checksumSHA1": "YETxI2a2rbBMyJ/F3YE8jVXkYIU=",
 			"path": "github.com/qframe/types/inventory",
 			"revision": "a8fbe9e1fe8696abcb1b330911501fd3966abccc",
 			"revisionTime": "2017-07-05T11:44:26Z"
 		},
 		{
-			"checksumSHA1": "aaRwiac894xYdgN6sDMGMFs9xjc=",
+			"checksumSHA1": "ukPuVhlXEoflxTyT2gdpqxVprzI=",
 			"path": "github.com/qframe/types/messages",
 			"revision": "a8fbe9e1fe8696abcb1b330911501fd3966abccc",
 			"revisionTime": "2017-07-05T11:44:26Z"
 		},
 		{
-			"checksumSHA1": "xIx59dVUWQ7xpWbHFhWMdkoQLe4=",
+			"checksumSHA1": "PTmGKQr6Tj7F4NAeQr3end3khEA=",
 			"path": "github.com/qnib/qframe-types",
 			"revision": "8f55e9b42bcdb795ccc60045f6930f341e790a70",
 			"revisionTime": "2017-07-12T11:31:37Z"
@@ -492,6 +506,12 @@
 			"path": "github.com/satori/go.uuid",
 			"revision": "5bf94b69c6b68ee1b541973bb8e1144db23a194b",
 			"revisionTime": "2017-03-21T23:07:31Z"
+		},
+		{
+			"checksumSHA1": "7MMxe2xCV/0fpJhUuTfTeOKxCxs=",
+			"path": "github.com/sirupsen/logrus",
+			"revision": "51dc0fc64317a2861273909081f9c315786533eb",
+			"revisionTime": "2017-07-13T11:57:24Z"
 		},
 		{
 			"checksumSHA1": "m8hYD/alsufIYIM7sR06wbL+dKo=",
