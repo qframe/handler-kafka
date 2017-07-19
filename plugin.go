@@ -36,24 +36,29 @@ func New(qChan qtypes.QChan, cfg *config.Config, name string) (Plugin, error) {
 }
 
 // Connect creates a connection to InfluxDB
-func (p *Plugin) Connect() {
-	var err error
+func (p *Plugin) Connect() (err error) {
 	brokers := p.CfgStringOr("broker", "localhost:9092")
+	p.Log("info", fmt.Sprintf("Connect to broker: %s", brokers))
 	p.producer, err = kafka.NewProducer(&kafka.ConfigMap{"bootstrap.servers": brokers})
 	if err != nil {
-		msg := fmt.Sprintf("Failed to create producer: %s\n", err)
-		p.Log("error", msg)
+		return
 	} else {
 		msg := fmt.Sprintf("Created Producer ID:%d Name:%s\n", p.MyID, p.Name)
 		p.Log("info", msg)
 	}
+	return
 }
 
 
 // Run fetches everything from the Data channel and flushes it to stdout
 func (p *Plugin) Run() {
 	p.Log("notice", fmt.Sprintf("Start handler %s, v%s", p.Name, version))
-	p.Connect()
+	err := p.Connect()
+	if err != nil {
+		msg := fmt.Sprintf("Failed to create producer: %s\n", err)
+		p.Log("error", msg)
+		return
+	}
 	bg := p.QChan.Data.Join()
 	/*dims := map[string]string{
 		"version": version,
