@@ -12,4 +12,7 @@ broker:
       - "moby:127.0.0.1"
     environment:
       ZK_SERVERS: "moby"
+kafkacat:
+    image: qnib/plain-kafkacat
+    command: wait.sh
 

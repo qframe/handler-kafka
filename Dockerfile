@@ -10,3 +10,4 @@ RUN apt-get -qq update \
  && ./configure \
  && make \
  && make install
+
