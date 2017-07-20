@@ -11,6 +11,7 @@ import (
 
 	"github.com/qnib/qframe-types"
 	"github.com/qframe/types/docker-events"
+	"strings"
 )
 
 const (
@@ -37,9 +38,15 @@ func New(qChan qtypes.QChan, cfg *config.Config, name string) (Plugin, error) {
 
 // Connect creates a connection to InfluxDB
 func (p *Plugin) Connect() (err error) {
-	brokers := p.CfgStringOr("broker", "localhost:9092")
+	bPort := p.CfgStringOr("broker.port", "9092")
+	bList := []string{}
+	for _, b := range strings.Split(p.CfgStringOr("broker.hosts", "tasks.broker"), ",") {
+		bList = append(bList, fmt.Sprintf("%s:%s", b, bPort))
+	}
+	brokers := strings.Join(bList, ",")
 	p.Log("info", fmt.Sprintf("Connect to broker: %s", brokers))
 	p.producer, err = kafka.NewProducer(&kafka.ConfigMap{"bootstrap.servers": brokers})
+
 	if err != nil {
 		return
 	} else {
@@ -145,7 +152,7 @@ func (p *Plugin) PushToKafka(e interface{}) (err error) {
 		} else {
 			msg := fmt.Sprintf("Delivered message to topic %s [%d] at offset %v",
 				*m.TopicPartition.Topic, m.TopicPartition.Partition, m.TopicPartition.Offset)
-			p.Log("debug", msg)
+			p.Log("tracing", msg)
 		}
 	}
 	return
