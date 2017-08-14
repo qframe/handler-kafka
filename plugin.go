@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"reflect"
+	"strings"
 	"sync"
 
 	"github.com/zpatrick/go-config"
@@ -11,7 +12,7 @@ import (
 
 	"github.com/qnib/qframe-types"
 	"github.com/qframe/types/docker-events"
-	"strings"
+	"github.com/qframe/functions"
 )
 
 const (
@@ -44,7 +45,7 @@ func (p *Plugin) Connect() (err error) {
 		bList = append(bList, fmt.Sprintf("%s:%s", b, bPort))
 	}
 	brokers := strings.Join(bList, ",")
-	p.Log("info", fmt.Sprintf("Connect to broker: %s", brokers))
+	qfunctions.Log(p, "info", fmt.Sprintf("Connect to broker: %s", brokers))
 	p.producer, err = kafka.NewProducer(&kafka.ConfigMap{"bootstrap.servers": brokers})
 
 	if err != nil {
@@ -59,11 +60,11 @@ func (p *Plugin) Connect() (err error) {
 
 // Run fetches everything from the Data channel and flushes it to stdout
 func (p *Plugin) Run() {
-	p.Log("notice", fmt.Sprintf("Start handler %s, v%s", p.Name, version))
+	qfunctions.Log(p, "notice", fmt.Sprintf("Start handler %s, v%s", p.Name, version))
 	err := p.Connect()
 	if err != nil {
 		msg := fmt.Sprintf("Failed to create producer: %s\n", err)
-		p.Log("error", msg)
+		qfunctions.Log(p, "error", msg)
 		return
 	}
 	bg := p.QChan.Data.Join()
@@ -74,7 +75,7 @@ func (p *Plugin) Run() {
 	for {
 		select {
 		case val := <-bg.Read:
-			p.Log("trace", fmt.Sprintf("received event: %s | %v", reflect.TypeOf(val), val))
+			qfunctions.Log(p, "trace", fmt.Sprintf("received event: %s | %v", reflect.TypeOf(val), val))
 			switch val.(type) {
 			case qtypes.Metric:
 				m := val.(qtypes.Metric)
@@ -126,7 +127,7 @@ func (p *Plugin) ToPayload(e interface{}) (payloads []Payload, err error) {
 		payloads = append(payloads, Payload{Topic: "srv_event", Data: se.EventToJSON()})
 
 	default:
-		p.Log("info", fmt.Sprintf("Skip sending to kafka: %s", reflect.TypeOf(e)))
+		qfunctions.Log(p, "info", fmt.Sprintf("Skip sending to kafka: %s", reflect.TypeOf(e)))
 
 	}
 	return
@@ -139,7 +140,7 @@ func (p *Plugin) PushToKafka(e interface{}) (err error) {
 		data := payload.Data
 		val, err := json.Marshal(data)
 		if err != nil {
-			p.Log("error", fmt.Sprintf("Marshaling failed: %v", err.Error()))
+			qfunctions.Log(p, "error", fmt.Sprintf("Marshaling failed: %v", err.Error()))
 			return err
 		}
 		err = p.producer.Produce(&kafka.Message{TopicPartition: kafka.TopicPartition{Topic: &topic, Partition: kafka.PartitionAny}, Value: val}, p.deliveryChan)
@@ -147,12 +148,12 @@ func (p *Plugin) PushToKafka(e interface{}) (err error) {
 		m := e.(*kafka.Message)
 
 		if m.TopicPartition.Error != nil {
-			p.Log("error", fmt.Sprintf("Delivery failed: %v", m.TopicPartition.Error))
+			qfunctions.Log(p, "error", fmt.Sprintf("Delivery failed: %v", m.TopicPartition.Error))
 			return m.TopicPartition.Error
 		} else {
 			msg := fmt.Sprintf("Delivered message to topic %s [%d] at offset %v",
 				*m.TopicPartition.Topic, m.TopicPartition.Partition, m.TopicPartition.Offset)
-			p.Log("tracing", msg)
+			qfunctions.Log(p, "tracing", msg)
 		}
 	}
 	return
