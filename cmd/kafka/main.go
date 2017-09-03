@@ -10,6 +10,7 @@ import (
 	"github.com/qnib/qframe-types"
 	"github.com/qframe/handler-kafka"
 	"github.com/qframe/collector-docker-events"
+	"github.com/qframe/types/qchannel"
 )
 
 func check_err(pname string, err error) {
@@ -35,7 +36,7 @@ func Run(ctx *cli.Context) {
 	}
 
 	cfg := config.NewConfig([]config.Provider{config.NewStatic(kv)})
-	qChan := qtypes.NewQChan()
+	qChan := qtypes_qchannel.NewQChan()
 	qChan.Broadcast()
 	//////// Handlers
 	phk, err := qhandler_kafka.New(qChan, cfg, "kafka")

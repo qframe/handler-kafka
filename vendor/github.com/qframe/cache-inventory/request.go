@@ -6,10 +6,9 @@ package qcache_inventory
 */
 
 import (
+	"strings"
 	"time"
 	"github.com/docker/docker/api/types"
-
-	"strings"
 )
 
 type ContainerRequest struct {
@@ -53,6 +52,9 @@ func NewIPContainerRequest(src, ip string) ContainerRequest {
 
 func (this ContainerRequest) Equal(other types.ContainerJSON) bool {
 	matchIP := false
+	if this.IP != "" && other.NetworkSettings.IPAddress == this.IP {
+		matchIP = true
+	}
 	if other.NetworkSettings.Networks != nil {
 		for _, net := range other.NetworkSettings.Networks {
 			if this.IP == net.IPAddress {
@@ -60,7 +62,9 @@ func (this ContainerRequest) Equal(other types.ContainerJSON) bool {
 			}
 		}
 	}
-	return this.ID == other.ID || this.Name == strings.Trim(other.Name, "/") || matchIP
+	idEqual := this.ID != "" && this.ID == other.ID
+	nameEqual := this.Name != "" && this.Name == strings.Trim(other.Name, "/")
+	return idEqual || nameEqual || matchIP
 }
 
 func (cr *ContainerRequest) TimedOut() bool {

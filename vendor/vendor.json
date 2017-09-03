@@ -453,82 +453,82 @@
 			"revisionTime": "2017-07-13T15:20:39Z"
 		},
 		{
-			"checksumSHA1": "sZo+GGrUDJBFhCCs+K3Vrc24Nno=",
+			"checksumSHA1": "BMcwTzHOjf/VEhYOupXwjbx0bpU=",
 			"path": "github.com/qframe/cache-inventory",
-			"revision": "5a2490f4c53a8ab907668e64f8836fa9b3411dd5",
-			"revisionTime": "2017-07-12T08:05:45Z"
+			"revision": "d3bb0c9e7c6fed40e0e21d95e685a37668d46ae9",
+			"revisionTime": "2017-08-30T09:01:30Z"
 		},
 		{
-			"checksumSHA1": "Yav7C4YnY2lcPlJwK6AsBNXwy0g=",
+			"checksumSHA1": "vACp1rS5orDZylvZs/K0m5uC6Dc=",
 			"path": "github.com/qframe/collector-docker-events",
-			"revision": "4adea8b93699b5745fea354818c768f3ec0aac73",
-			"revisionTime": "2017-07-12T09:00:17Z"
+			"revision": "ad9517364fe6315ed1bb5a786707353890d14a47",
+			"revisionTime": "2017-08-30T13:54:52Z"
 		},
 		{
 			"checksumSHA1": "oN2u88F4nymHo6GT/Y0zHZSSGmw=",
 			"path": "github.com/qframe/functions",
-			"revision": "3a54f3aeb8ab0d18c9521a364b4270254512b8e8",
-			"revisionTime": "2017-08-09T10:52:58Z"
+			"revision": "d4201f306a2c3de5c24bbecd6370344e24bb3227",
+			"revisionTime": "2017-08-14T20:16:31Z"
 		},
 		{
 			"checksumSHA1": "ZokxRO/FavchTs9BrbmiCZNrzO4=",
 			"path": "github.com/qframe/types/constants",
-			"revision": "784a897a26e5be20b50d5b9b1dcca09ea7eeff46",
-			"revisionTime": "2017-08-04T15:52:39Z"
+			"revision": "78c40b74b2fb85ce1d13c3c649e5e1a0c5a0e6dd",
+			"revisionTime": "2017-09-02T15:59:23Z"
 		},
 		{
 			"checksumSHA1": "qTxHjY8oFOfYzlsu582xuqckC50=",
 			"path": "github.com/qframe/types/docker-events",
-			"revision": "a8fbe9e1fe8696abcb1b330911501fd3966abccc",
-			"revisionTime": "2017-07-05T11:44:26Z"
+			"revision": "78c40b74b2fb85ce1d13c3c649e5e1a0c5a0e6dd",
+			"revisionTime": "2017-09-02T15:59:23Z"
 		},
 		{
-			"checksumSHA1": "IypK2Ok21t3MqgtbokuPmA9ZSBY=",
+			"checksumSHA1": "bu3TUas4vsPjIgv919gHxlXT+YE=",
 			"path": "github.com/qframe/types/helper",
-			"revision": "784a897a26e5be20b50d5b9b1dcca09ea7eeff46",
-			"revisionTime": "2017-08-04T15:52:39Z"
+			"revision": "78c40b74b2fb85ce1d13c3c649e5e1a0c5a0e6dd",
+			"revisionTime": "2017-09-02T15:59:23Z"
 		},
 		{
-			"checksumSHA1": "OSv8S8URlXCKHzDjhVRhE/PTIjc=",
+			"checksumSHA1": "/U50CSTtZNP3Pd5D7iQ7ouzrDjE=",
 			"path": "github.com/qframe/types/interfaces",
-			"revision": "784a897a26e5be20b50d5b9b1dcca09ea7eeff46",
-			"revisionTime": "2017-08-04T15:52:39Z"
+			"revision": "78c40b74b2fb85ce1d13c3c649e5e1a0c5a0e6dd",
+			"revisionTime": "2017-09-02T15:59:23Z"
 		},
 		{
-			"checksumSHA1": "ukPuVhlXEoflxTyT2gdpqxVprzI=",
+			"checksumSHA1": "GoRIbX5AU5q7t8SJpb6Pl+1NxrI=",
 			"path": "github.com/qframe/types/messages",
-			"revision": "a8fbe9e1fe8696abcb1b330911501fd3966abccc",
-			"revisionTime": "2017-07-05T11:44:26Z"
+			"revision": "78c40b74b2fb85ce1d13c3c649e5e1a0c5a0e6dd",
+			"revisionTime": "2017-09-02T15:59:23Z"
 		},
 		{
-			"checksumSHA1": "ws3jTDBoKCZq4Jc26aViDwaIpgM=",
+			"checksumSHA1": "utE2O+Muo8cEWLDxs/YUVxfzlCo=",
 			"path": "github.com/qframe/types/metrics",
-			"revision": "784a897a26e5be20b50d5b9b1dcca09ea7eeff46",
-			"revisionTime": "2017-08-04T15:52:39Z"
+			"revision": "78c40b74b2fb85ce1d13c3c649e5e1a0c5a0e6dd",
+			"revisionTime": "2017-09-02T15:59:23Z"
 		},
 		{
-			"checksumSHA1": "Yv/b9fvbGWeEw1dMXLUkmU9q+j0=",
+			"checksumSHA1": "L48vf4hAvWWvB8GjBQAAFRlbD1c=",
 			"path": "github.com/qframe/types/plugin",
-			"revision": "784a897a26e5be20b50d5b9b1dcca09ea7eeff46",
-			"revisionTime": "2017-08-04T15:52:39Z"
+			"revision": "78c40b74b2fb85ce1d13c3c649e5e1a0c5a0e6dd",
+			"revisionTime": "2017-09-02T15:59:23Z"
 		},
 		{
 			"checksumSHA1": "bI9DmB1P2XfVkog5EvRu01AZ4Uc=",
 			"path": "github.com/qframe/types/qchannel",
-			"revision": "784a897a26e5be20b50d5b9b1dcca09ea7eeff46",
-			"revisionTime": "2017-08-04T15:52:39Z"
+			"revision": "78c40b74b2fb85ce1d13c3c649e5e1a0c5a0e6dd",
+			"revisionTime": "2017-09-02T15:59:23Z"
 		},
 		{
 			"checksumSHA1": "aWT8tf2NLTwFLrrTSEZCraccjMI=",
 			"path": "github.com/qframe/types/ticker",
-			"revision": "784a897a26e5be20b50d5b9b1dcca09ea7eeff46",
-			"revisionTime": "2017-08-04T15:52:39Z"
+			"revision": "78c40b74b2fb85ce1d13c3c649e5e1a0c5a0e6dd",
+			"revisionTime": "2017-09-02T15:59:23Z"
 		},
 		{
-			"checksumSHA1": "xIx59dVUWQ7xpWbHFhWMdkoQLe4=",
+			"checksumSHA1": "0Xj4ELvinVxZNzoeXV+adY5Ea9c=",
 			"path": "github.com/qnib/qframe-types",
-			"revision": "8f55e9b42bcdb795ccc60045f6930f341e790a70",
-			"revisionTime": "2017-07-12T11:31:37Z"
+			"revision": "5472019f4b0c27f9f6e7ea61c93685972e292d62",
+			"revisionTime": "2017-07-03T19:59:37Z"
 		},
 		{
 			"checksumSHA1": "Urhq3MJWVz6GbfE0AFQXkDsSPyQ=",

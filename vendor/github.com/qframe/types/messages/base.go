@@ -4,11 +4,11 @@ import (
 	"time"
 	"crypto/sha1"
 	"fmt"
-	"github.com/qnib/qframe-types"
+	"github.com/qframe/types/plugin"
 )
 
 const (
-	version = "0.1.1"
+	version = "0.1.5"
 )
 
 type Base struct {
@@ -47,18 +47,6 @@ func NewBaseFromBase(src string, b Base) Base {
 		SourcePath: append(b.SourcePath, src),
 		SourceSuccess: b.SourceSuccess,
 		Tags: b.Tags,
-	}
-}
-
-func NewBaseFromOldBase(src string, b qtypes.Base) Base {
-	return Base {
-		BaseVersion: b.BaseVersion,
-		ID: b.ID,
-		Time: b.Time,
-		SourceID: b.SourceID,
-		SourcePath: append(b.SourcePath, src),
-		SourceSuccess: b.SourceSuccess,
-		Tags: b.Data,
 	}
 }
 
@@ -127,8 +115,7 @@ func Sha1HashString(s string) string {
 	return fmt.Sprintf("%x", bs)
 }
 
-
-func (b *Base) StopProcessing(p qtypes.Plugin, allowEmptyInput bool) bool {
+func (b *Base) StopProcessing(p *qtypes_plugin.Plugin, allowEmptyInput bool) bool {
 	if b.SourceID != 0 && p.MyID == b.SourceID {
 		msg := fmt.Sprintf("Msg came from the same GID (My:%d == %d:SourceID)", p.MyID, b.SourceID)
 		p.Log("debug", msg)
@@ -144,12 +131,12 @@ func (b *Base) StopProcessing(p qtypes.Plugin, allowEmptyInput bool) bool {
 	}
 	srcSuccess := p.CfgBoolOr("source-success", true)
 	if ! b.InputsMatch(inputs) {
-		p.Log("debug", fmt.Sprintf("InputsMatch(%v) != %s", inputs, b.GetLastSource()))
+		p.Log("trace", fmt.Sprintf("InputsMatch(%v) != %s", inputs, b.GetLastSource()))
 		return true
 	}
 	if b.SourceSuccess != srcSuccess {
 		msg := fmt.Sprintf("qm.SourceSuccess (%v) != (%v) srcSuccess", b.SourceSuccess, srcSuccess)
-		p.Log("debug", msg)
+		p.Log("trace", msg)
 		return true
 	}
 	return false

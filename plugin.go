@@ -6,32 +6,34 @@ import (
 	"reflect"
 	"strings"
 	"sync"
-
 	"github.com/zpatrick/go-config"
 	"github.com/confluentinc/confluent-kafka-go/kafka"
 
-	"github.com/qnib/qframe-types"
 	"github.com/qframe/types/docker-events"
 	"github.com/qframe/functions"
+	"github.com/qframe/types/constants"
+	"github.com/qframe/types/plugin"
+	"github.com/qframe/types/qchannel"
+	"github.com/qframe/types/metrics"
 )
 
 const (
 	version = "0.1.0"
-	pluginTyp = qtypes.HANDLER
+	pluginTyp = qtypes_constants.HANDLER
 	pluginPkg = "kafka"
 )
 
 type Plugin struct {
-    qtypes.Plugin
+    *qtypes_plugin.Plugin
 	producer *kafka.Producer
 	mutex sync.Mutex
 	deliveryChan chan kafka.Event
 }
 
-func New(qChan qtypes.QChan, cfg *config.Config, name string) (Plugin, error) {
+func New(qChan qtypes_qchannel.QChan, cfg *config.Config, name string) (Plugin, error) {
 	var err error
 	p := Plugin{
-		Plugin: qtypes.NewNamedPlugin(qChan, cfg, pluginTyp, pluginPkg, name, version),
+		Plugin: qtypes_plugin.NewNamedPlugin(qChan, cfg, pluginTyp, pluginPkg, name, version),
 		deliveryChan: make(chan kafka.Event),
 	}
 	return p, err
@@ -77,9 +79,9 @@ func (p *Plugin) Run() {
 		case val := <-bg.Read:
 			qfunctions.Log(p, "trace", fmt.Sprintf("received event: %s | %v", reflect.TypeOf(val), val))
 			switch val.(type) {
-			case qtypes.Metric:
-				m := val.(qtypes.Metric)
-				if p.StopProcessingMetric(m, false) {
+			case qtypes_metrics.Metric:
+				m := val.(qtypes_metrics.Metric)
+				if m.StopProcessing(p.Plugin, false) {
 					continue
 				}
 			case qtypes_docker_events.ServiceEvent:

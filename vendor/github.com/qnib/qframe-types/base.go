@@ -7,7 +7,7 @@ import (
 )
 
 const (
-	version = "0.5.12"
+	version = "0.5.11"
 )
 
 type Base struct {
@@ -18,6 +18,7 @@ type Base struct {
 	SourcePath		[]string
 	SourceSuccess 	bool
 	Data 			map[string]string // Additional Data
+
 }
 
 func NewBase(src string) Base {
