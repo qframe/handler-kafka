@@ -10,6 +10,7 @@ import (
 	"github.com/qnib/qframe-types"
 	"github.com/qframe/handler-kafka"
 	"github.com/qframe/collector-docker-events"
+	"fmt"
 )
 
 func check_err(pname string, err error) {
@@ -24,14 +25,14 @@ func NewConfig(kv map[string]string) *config.Config {
 }
 
 func Run(ctx *cli.Context) {
-	// Create conf
+	if len(os.Args) == 1 {
+		fmt.Println("usage: go run main.go <brokers>")
+	}
 	log.Printf("[II] Start Version: %s", ctx.App.Version)
-
 	kv := map[string]string{
 		"log.level": "debug",
-		"log.only-plugins": "kafka",
-		"handler.log.inputs": "docker-events",
 		"handler.kafka.inputs": "docker-events",
+		"handler.kafka.broker.hosts": os.Args[1],
 	}
 
 	cfg := config.NewConfig([]config.Provider{config.NewStatic(kv)})
