@@ -12,6 +12,9 @@ import (
 	"github.com/qnib/qframe-types"
 	"github.com/qframe/types/docker-events"
 	"strings"
+	"github.com/qframe/types/plugin"
+	"github.com/qframe/types/metrics"
+	"github.com/qframe/types/qchannel"
 )
 
 const (
@@ -21,16 +24,16 @@ const (
 )
 
 type Plugin struct {
-    qtypes.Plugin
+    *qtypes_plugin.Plugin
 	producer *kafka.Producer
 	mutex sync.Mutex
 	deliveryChan chan kafka.Event
 }
 
-func New(qChan qtypes.QChan, cfg *config.Config, name string) (Plugin, error) {
+func New(qChan qtypes_qchannel.QChan, cfg *config.Config, name string) (Plugin, error) {
 	var err error
 	p := Plugin{
-		Plugin: qtypes.NewNamedPlugin(qChan, cfg, pluginTyp, pluginPkg, name, version),
+		Plugin: qtypes_plugin.NewNamedPlugin(qChan, cfg, pluginTyp, pluginPkg, name, version),
 		deliveryChan: make(chan kafka.Event),
 	}
 	return p, err
@@ -76,18 +79,19 @@ func (p *Plugin) Run() {
 		case val := <-bg.Read:
 			p.Log("trace", fmt.Sprintf("received event: %s | %v", reflect.TypeOf(val), val))
 			switch val.(type) {
-			case qtypes.Metric:
-				m := val.(qtypes.Metric)
-				if p.StopProcessingMetric(m, false) {
+			case qtypes_metrics.Metric:
+				m := val.(qtypes_metrics.Metric)
+				/*if m.StopProcessing(p.Plugin, false) {
 					continue
-				}
+				}*/
+				p.PushToKafka(m)
 			case qtypes_docker_events.ServiceEvent:
 				se := val.(qtypes_docker_events.ServiceEvent)
-				se.StopProcessing(p.Plugin, false)
+				//se.StopProcessing(p.Plugin, false)
 				p.PushToKafka(se)
 			case qtypes_docker_events.ContainerEvent:
 				ce := val.(qtypes_docker_events.ContainerEvent)
-				ce.StopProcessing(p.Plugin, false)
+				//ce.StopProcessing(p.Plugin, false)
 				p.PushToKafka(ce)
 			}
 		}
@@ -108,23 +112,22 @@ func (p *Plugin) ToPayload(e interface{}) (payloads []Payload, err error) {
 		switch ce.Event.Action {
 		case "start","create":
 			// In case the container starts, the information about the start is passed
-			payloads = append(payloads, Payload{Topic: "cnt_details", Data: ce.ContainerToJSON()})
+			payloads = append(payloads, Payload{Topic: "cnt_details", Data: ce.ContainerToFlatJSON()})
 		case "exec_create":
 			return
 		}
 		// Add normal DockerEvent
-		payloads = append(payloads, Payload{Topic: "cnt_event", Data: ce.EventToJSON()})
+		payloads = append(payloads, Payload{Topic: "cnt_event", Data: ce.EventToFlatJSON()})
 	case qtypes_docker_events.ServiceEvent:
 		se := e.(qtypes_docker_events.ServiceEvent)
 		switch se.Event.Action {
 		case "create":
 			// In case the container starts, the information about the start is passed
-			payloads = append(payloads, Payload{Topic: "srv_details", Data: se.ServiceToJSON()})
+			payloads = append(payloads, Payload{Topic: "srv_details", Data: se.ServiceToFlatJSON()})
 		case "exec_create":
 			return
 		}
-		payloads = append(payloads, Payload{Topic: "srv_event", Data: se.EventToJSON()})
-
+		payloads = append(payloads, Payload{Topic: "srv_event", Data: se.ServiceEventToFlatJSON()})
 	default:
 		p.Log("info", fmt.Sprintf("Skip sending to kafka: %s", reflect.TypeOf(e)))
 

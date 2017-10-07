@@ -15,7 +15,6 @@ const (
 	FILTER = "filter"
 	COLLECTOR = "collector"
 	HANDLER = "handler"
-	CACHE = "cache"
 )
 
 type Plugin struct {
@@ -146,12 +145,12 @@ func (p *Plugin) CfgBoolOr(path string, alt bool) bool {
 	return res
 }
 
-func (p *Plugin) GetInputs() (res []string) {
+func (p *Plugin) GetInputs() []string {
 	inStr, err := p.CfgString("inputs")
-	if err == nil {
-		res = strings.Split(inStr, ",")
+	if err != nil {
+		inStr = ""
 	}
-	return res
+	return strings.Split(inStr, ",")
 }
 
 func (p *Plugin) GetCfgItems(key string) []string {
@@ -186,9 +185,6 @@ func (p *Plugin) StartTicker(name string, durMs int) Ticker {
 	return ticker
 }
 
-/*************** This mess needs to be abstracted...
- Interface over all messages or such
- */
 func (p *Plugin) StopProcessingMessage(qm Message, allowEmptyInput bool) bool {
 	p.MsgCount["received"]++
 	if p.MyID == qm.SourceID {
