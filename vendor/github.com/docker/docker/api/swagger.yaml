@@ -19,10 +19,10 @@ produces:
 consumes:
   - "application/json"
   - "text/plain"
-basePath: "/v1.31"
+basePath: "/v1.30"
 info:
   title: "Docker Engine API"
-  version: "1.31"
+  version: "1.30"
   x-logo:
     url: "https://docs.docker.com/images/logo-docker-main.png"
   description: |
@@ -52,11 +52,10 @@ info:
 
     The API uses an open schema model, which means server may add extra properties to responses. Likewise, the server will ignore any extra query parameters and request body properties. When you write clients, you need to ignore additional properties in responses to ensure they do not break when talking to newer Docker daemons.
 
-    This documentation is for version 1.31 of the API. Use this table to find documentation for previous versions of the API:
+    This documentation is for version 1.30 of the API, which was introduced with Docker 17.06. Use this table to find documentation for previous versions of the API:
 
     Docker version  | API version | Changes
     ----------------|-------------|---------
-    17.06.x | [1.30](https://docs.docker.com/engine/api/v1.30/) | [API changes](https://docs.docker.com/engine/api/version-history/#v1-30-api-changes)
     17.05.x | [1.29](https://docs.docker.com/engine/api/v1.29/) | [API changes](https://docs.docker.com/engine/api/version-history/#v1-29-api-changes)
     17.04.x | [1.28](https://docs.docker.com/engine/api/v1.28/) | [API changes](https://docs.docker.com/engine/api/version-history/#v1-28-api-changes)
     17.03.1 | [1.27](https://docs.docker.com/engine/api/v1.27/) | [API changes](https://docs.docker.com/engine/api/version-history/#v1-27-api-changes)
@@ -949,12 +948,6 @@ definitions:
               type: "string"
           BaseLayer:
             type: "string"
-      Metadata:
-        type: "object"
-        properties:
-          LastTagTime:
-            type: "string"
-            format: "dateTime"
 
   ImageSummary:
     type: "object"
@@ -1055,10 +1048,6 @@ definitions:
         type: "string"
         description: "Mount path of the volume on the host."
         x-nullable: false
-      CreatedAt:
-        type: "string"
-        format: "dateTime"
-        description: "Time volume was created."
       Status:
         type: "object"
         description: |
@@ -1112,7 +1101,6 @@ definitions:
         com.example.some-label: "some-value"
         com.example.some-other-label: "some-other-value"
       Scope: "local"
-      CreatedAt: "2016-06-07T20:31:11.853781916Z"
 
   Network:
     type: "object"
@@ -1637,7 +1625,7 @@ definitions:
       may not be applied if the version number has changed from the last read. In other words,
       if two update requests specify the same base version, only one of the requests can succeed.
       As a result, two separate update requests that happen at the same time will not
-      unintentionally overwrite each other.
+      unintentially overwrite each other.
     type: "object"
     properties:
       Index:
@@ -1975,39 +1963,11 @@ definitions:
     description: "User modifiable task configuration."
     type: "object"
     properties:
-      PluginSpec:
-        type: "object"
-        description: "Invalid when specified with `ContainerSpec`."
-        properties:
-          Name:
-            description: "The name or 'alias' to use for the plugin."
-            type: "string"
-          Remote:
-            description: "The plugin image reference to use."
-            type: "string"
-          Disabled:
-            description: "Disable the plugin once scheduled."
-            type: "boolean"
-          PluginPrivilege:
-            type: "array"
-            items:
-              description: "Describes a permission accepted by the user upon installing the plugin."
-              type: "object"
-              properties:
-                Name:
-                  type: "string"
-                Description:
-                  type: "string"
-                Value:
-                  type: "array"
-                  items:
-                    type: "string"
       ContainerSpec:
         type: "object"
-        description: "Invalid when specified with `PluginSpec`."
         properties:
           Image:
-            description: "The image name to use for the container"
+            description: "The image name to use for the container."
             type: "string"
           Labels:
             description: "User-defined key/value data."
@@ -2733,11 +2693,6 @@ paths:
   /containers/json:
     get:
       summary: "List containers"
-      description: |
-        Returns a list of containers. For details on the format, see [the inspect endpoint](#operation/ContainerInspect).
-
-        Note that it uses a different, smaller representation of a container than inspecting a single container. For example,
-        the list of linked containers is not propagated .
       operationId: "ContainerList"
       produces:
         - "application/json"
@@ -3164,7 +3119,7 @@ paths:
                       all processes in the container. Freezing the process requires the process to
                       be running. As a result, paused containers are both `Running` _and_ `Paused`.
 
-                      Use the `Status` field instead to determine if a container's state is "running".
+                      Use the `Status` field instead to determin if a container's state is "running".
                     type: "boolean"
                   Paused:
                     description: "Whether this container is paused."
@@ -4779,27 +4734,6 @@ paths:
           schema:
             $ref: "#/definitions/ErrorResponse"
       tags: ["Image"]
-  /build/prune:
-    post:
-      summary: "Delete builder cache"
-      produces:
-        - "application/json"
-      operationId: "BuildPrune"
-      responses:
-        200:
-          description: "No error"
-          schema:
-            type: "object"
-            properties:
-              SpaceReclaimed:
-                description: "Disk space reclaimed in bytes"
-                type: "integer"
-                format: "int64"
-        500:
-          description: "Server error"
-          schema:
-            $ref: "#/definitions/ErrorResponse"
-      tags: ["Image"]
   /images/create:
     post:
       summary: "Create an image"
@@ -5662,23 +5596,15 @@ paths:
 
         Various objects within Docker report events when something happens to them.
 
-        Containers report these events: `attach`, `commit`, `copy`, `create`, `destroy`, `detach`, `die`, `exec_create`, `exec_detach`, `exec_start`, `export`, `health_status`, `kill`, `oom`, `pause`, `rename`, `resize`, `restart`, `start`, `stop`, `top`, `unpause`, and `update`
+        Containers report these events: `attach, commit, copy, create, destroy, detach, die, exec_create, exec_detach, exec_start, export, health_status, kill, oom, pause, rename, resize, restart, start, stop, top, unpause, update`
 
-        Images report these events: `delete`, `import`, `load`, `pull`, `push`, `save`, `tag`, and `untag`
+        Images report these events: `delete, import, load, pull, push, save, tag, untag`
 
-        Volumes report these events: `create`, `mount`, `unmount`, and `destroy`
+        Volumes report these events: `create, mount, unmount, destroy`
 
-        Networks report these events: `create`, `connect`, `disconnect`, `destroy`, `update`, and `remove`
+        Networks report these events: `create, connect, disconnect, destroy`
 
         The Docker daemon reports these events: `reload`
-
-        Services report these events: `create`, `update`, and `remove`
-
-        Nodes report these events: `create`, `update`, and `remove`
-
-        Secrets report these events: `create`, `update`, and `remove`
-
-        Configs report these events: `create`, `update`, and `remove`
 
       operationId: "SystemEvents"
       produces:
@@ -5753,8 +5679,7 @@ paths:
             - `label=<string>` image or container label
             - `network=<string>` network name or ID
             - `plugin`=<string> plugin name or ID
-            - `scope`＝<string> local or swarm
-            - `type=<string>` object to filter by, one of `container`, `image`, `volume`, `network`, `daemon`, `plugin`, `node`, `service` or `secret`
+            - `type=<string>` object to filter by, one of `container`, `image`, `volume`, `network`, or `daemon`
             - `volume=<string>` volume name or ID
           type: "string"
       tags: ["System"]
@@ -6501,10 +6426,6 @@ paths:
           description: "Detailed inspect output for troubleshooting"
           type: "boolean"
           default: false
-        - name: "scope"
-          in: "query"
-          description: "Filter the network by scope (swarm, global, or local)"
-          type: "string"
       tags: ["Network"]
 
     delete:
@@ -7431,16 +7352,6 @@ paths:
               AdvertiseAddr:
                 description: "Externally reachable address advertised to other nodes. This can either be an address/port combination in the form `192.168.1.1:4567`, or an interface followed by a port number, like `eth0:4567`. If the port number is omitted, the port number from the listen address is used. If `AdvertiseAddr` is not specified, it will be automatically detected when possible."
                 type: "string"
-              DataPathAddr:
-                description: |
-                  Address or interface to use for data path traffic (format: `<ip|interface>`), for example,  `192.168.1.1`,
-                  or an interface, like `eth0`. If `DataPathAddr` is unspecified, the same address as `AdvertiseAddr`
-                  is used.
-
-                  The `DataPathAddr` specifies the address that global scope network drivers will publish towards other
-                  nodes in order to reach the containers running on this node. Using this parameter it is possible to
-                  separate the container data traffic from the management traffic of the cluster.
-                type: "string"
               ForceNewCluster:
                 description: "Force creation of a new swarm."
                 type: "boolean"
@@ -7489,17 +7400,6 @@ paths:
                 type: "string"
               AdvertiseAddr:
                 description: "Externally reachable address advertised to other nodes. This can either be an address/port combination in the form `192.168.1.1:4567`, or an interface followed by a port number, like `eth0:4567`. If the port number is omitted, the port number from the listen address is used. If `AdvertiseAddr` is not specified, it will be automatically detected when possible."
-                type: "string"
-              DataPathAddr:
-                description: |
-                  Address or interface to use for data path traffic (format: `<ip|interface>`), for example,  `192.168.1.1`,
-                  or an interface, like `eth0`. If `DataPathAddr` is unspecified, the same address as `AdvertiseAddr`
-                  is used.
-
-                  The `DataPathAddr` specifies the address that global scope network drivers will publish towards other
-                  nodes in order to reach the containers running on this node. Using this parameter it is possible to
-                  separate the container data traffic from the management traffic of the cluster.
-
                 type: "string"
               RemoteAddrs:
                 description: "Addresses of manager nodes already participating in the swarm."
@@ -8566,46 +8466,3 @@ paths:
           type: "string"
           required: true
       tags: ["Distribution"]
-  /session:
-    post:
-      summary: "Initialize interactive session"
-      description: |
-        Start a new interactive session with a server. Session allows server to call back to the client for advanced capabilities.
-
-        > **Note**: This endpoint is *experimental* and only available if the daemon is started with experimental
-        > features enabled. The specifications for this endpoint may still change in a future version of the API.
-
-        ### Hijacking
-
-        This endpoint hijacks the HTTP connection to HTTP2 transport that allows the client to expose gPRC services on that connection.
-
-        For example, the client sends this request to upgrade the connection:
-
-        ```
-        POST /session HTTP/1.1
-        Upgrade: h2c
-        Connection: Upgrade
-        ```
-
-        The Docker daemon will respond with a `101 UPGRADED` response follow with the raw stream:
-
-        ```
-        HTTP/1.1 101 UPGRADED
-        Connection: Upgrade
-        Upgrade: h2c
-        ```
-      operationId: "Session"
-      produces:
-        - "application/vnd.docker.raw-stream"
-      responses:
-        101:
-          description: "no error, hijacking successful"
-        400:
-          description: "bad parameter"
-          schema:
-            $ref: "#/definitions/ErrorResponse"
-        500:
-          description: "server error"
-          schema:
-            $ref: "#/definitions/ErrorResponse"
-      tags: ["Session (experimental)"]

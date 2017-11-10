@@ -1,10 +1,6 @@
 package swarm
 
-import (
-	"time"
-
-	"github.com/docker/docker/api/types/swarm/runtime"
-)
+import "time"
 
 // TaskState represents the state of a task.
 type TaskState string
@@ -55,11 +51,7 @@ type Task struct {
 
 // TaskSpec represents the spec of a task.
 type TaskSpec struct {
-	// ContainerSpec and PluginSpec are mutually exclusive.
-	// PluginSpec will only be used when the `Runtime` field is set to `plugin`
-	ContainerSpec *ContainerSpec      `json:",omitempty"`
-	PluginSpec    *runtime.PluginSpec `json:",omitempty"`
-
+	ContainerSpec ContainerSpec             `json:",omitempty"`
 	Resources     *ResourceRequirements     `json:",omitempty"`
 	RestartPolicy *RestartPolicy            `json:",omitempty"`
 	Placement     *Placement                `json:",omitempty"`
